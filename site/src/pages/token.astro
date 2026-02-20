@@ -195,7 +195,7 @@ import Page from '../layouts/Page.astro';
       if (pair.volume && pair.volume.h24) document.getElementById('stat-volume').textContent = fmt(pair.volume.h24);
       if (pair.liquidity && pair.liquidity.usd) document.getElementById('stat-liquidity').textContent = fmt(pair.liquidity.usd);
       if (pair.url) document.getElementById('buy-link').href = pair.url;
-    } catch (e) { console.error('dexscreener error:', e); }
+    } catch (e) { /* silent */ }
   }
 
   async function loadTreasury() {
@@ -222,7 +222,7 @@ import Page from '../layouts/Page.astro';
         daimonEl.insertAdjacentHTML('afterend', '<span class="treasury-usd">~' + fmt(daimonFormatted * daimonPrice) + '</span>');
       }
     } catch (e) {
-      console.error('treasury error:', e);
+      void('treasury error:', e);
       document.getElementById('treasury-eth').textContent = '---';
       document.getElementById('treasury-usdc').textContent = '---';
       document.getElementById('treasury-daimon').textContent = '---';
@@ -259,7 +259,7 @@ import Page from '../layouts/Page.astro';
         document.getElementById('registration-status').innerHTML = '<span class="registered-badge">registered as ' + esc(github) + '</span>';
       }
     } catch (e) {
-      console.error('connect error:', e);
+      void('connect error:', e);
       showMessage('connection failed: ' + e.message.slice(0, 100), 'error');
     }
   }
@@ -281,7 +281,7 @@ import Page from '../layouts/Page.astro';
       document.getElementById('registration-status').innerHTML = '<span class="registered-badge">registered as ' + esc(github) + '</span>';
       loadHolders();
     } catch (e) {
-      console.error(e);
+      void(e);
       if (e.message.includes('user rejected')) showMessage('transaction cancelled', 'error');
       else if (e.message.includes('must hold DAIMON')) showMessage('you need at least 1,000 DAIMON to register', 'error');
       else showMessage('registration failed: ' + e.message.slice(0, 100), 'error');
@@ -303,7 +303,7 @@ import Page from '../layouts/Page.astro';
       document.getElementById('registration-status').innerHTML = '';
       loadHolders();
     } catch (e) {
-      console.error(e);
+      void(e);
       showMessage('unregister failed: ' + e.message.slice(0, 100), 'error');
     }
   }
@@ -327,7 +327,7 @@ import Page from '../layouts/Page.astro';
       }
       document.getElementById('holders-list-content').innerHTML = html;
     } catch (e) {
-      console.error('load holders error:', e);
+      void('load holders error:', e);
       document.getElementById('holders-list-content').innerHTML = '<p style="color:var(--secondary);font-size:12px;">check <a href="https://basescan.org/address/0xcc5976790d41B10c254Be22d95F5ae20F73d0d8b#events" target="_blank">basescan events</a></p>';
     }
   }

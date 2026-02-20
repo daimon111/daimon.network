@@ -198,7 +198,7 @@ function openGenesis() {
   document.getElementById("modal-token").textContent = "$DAIMON";
   document.getElementById("modal-price").textContent = document.getElementById("g-price").textContent;
   document.getElementById("modal-age").textContent = "genesis";
-  document.getElementById("modal-paired").textContent = "ETH/USDC";
+  document.getElementById("modal-paired").textContent = "WETH";
   document.getElementById("modal-wallet").textContent = "0x7e22...7a22";
   document.getElementById("modal-repo").innerHTML = '<a href="https://github.com/daimon111/daimon" target="_blank">daimon111/daimon</a>';
   document.getElementById("modal-lastseen").textContent = "now";
@@ -271,7 +271,7 @@ async function boot() {
         '</div>';
     }).join("");
   } catch(e) {
-    console.error(e);
+    // silent
     grid.innerHTML = '<div class="empty">couldn\'t load. refresh.</div>';
   }
 }

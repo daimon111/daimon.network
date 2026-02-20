@@ -12,11 +12,13 @@ interface Agent {
   slug: string | null;
   registeredAt: number;
   lastSeen: number;
+  balanceEth: string | null;
   token: {
     address: string | null;
     symbol: string | null;
     priceUsd: string | null;
     change24h: string | null;
+    dexUrl: string | null;
   };
   github: {
     issues: GithubIssue[];
@@ -276,8 +278,8 @@ async function fetchTokenState(
 
 async function fetchDexPrices(
   tokenAddresses: string[]
-): Promise<Record<string, { priceUsd: string; change24h: string | null }>> {
-  const prices: Record<string, { priceUsd: string; change24h: string | null }> = {};
+): Promise<Record<string, { priceUsd: string; change24h: string | null; dexUrl: string | null }>> {
+  const prices: Record<string, { priceUsd: string; change24h: string | null; dexUrl: string | null }> = {};
   if (tokenAddresses.length === 0) return prices;
 
   try {
@@ -289,6 +291,7 @@ async function fetchDexPrices(
         baseToken: { address: string };
         priceUsd: string;
         priceChange?: { h24?: number };
+        url?: string;
       }>;
     };
     if (data.pairs) {
@@ -301,6 +304,7 @@ async function fetchDexPrices(
               pair.priceChange?.h24 != null
                 ? String(pair.priceChange.h24)
                 : null,
+            dexUrl: pair.url || null,
           };
         }
       }
@@ -311,8 +315,35 @@ async function fetchDexPrices(
   return prices;
 }
 
+async function fetchWalletBalance(rpcUrl: string, wallet: string): Promise<string | null> {
+  try {
+    const resp = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0", id: 1,
+        method: "eth_getBalance",
+        params: [wallet, "latest"],
+      }),
+    });
+    const data = (await resp.json()) as { result?: string };
+    if (data.result) {
+      const wei = parseInt(data.result, 16);
+      return (wei / 1e18).toFixed(4);
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 async function buildNetworkData(env: Env): Promise<NetworkResponse> {
-  const registryAgents = await fetchRegistryAgents(env);
+  let registryAgents: Awaited<ReturnType<typeof fetchRegistryAgents>>;
+  try {
+    registryAgents = await fetchRegistryAgents(env);
+  } catch {
+    return { agents: [], cachedAt: Date.now() };
+  }
 
   const agents: Agent[] = await Promise.all(
     registryAgents.map(async (raw) => {
@@ -333,31 +364,38 @@ async function buildNetworkData(env: Env): Promise<NetworkResponse> {
         slug,
         registeredAt: Number(raw.registeredAt),
         lastSeen: Number(raw.lastSeen),
+        balanceEth: null as string | null, // filled in after balance fetch
         token: {
           address: tokenInfo?.address || null,
           symbol: tokenInfo?.symbol || null,
-          priceUsd: null, // filled in after dex fetch
-          change24h: null,
+          priceUsd: null as string | null, // filled in after dex fetch
+          change24h: null as string | null,
+          dexUrl: null as string | null,
         },
         github,
       };
     })
   );
 
-  // Batch fetch all token prices
+  // Batch fetch all token prices + wallet balances in parallel
   const tokenAddresses = agents
     .filter((a) => a.token.address)
     .map((a) => a.token.address as string);
 
-  const prices = await fetchDexPrices(tokenAddresses);
+  const [prices, ...balances] = await Promise.all([
+    fetchDexPrices(tokenAddresses),
+    ...agents.map((a) => fetchWalletBalance(env.BASE_RPC, a.wallet)),
+  ]);
 
-  // Assign prices
-  for (const agent of agents) {
-    if (agent.token.address) {
-      const priceData = prices[agent.token.address.toLowerCase()];
+  // Assign prices and balances
+  for (let i = 0; i < agents.length; i++) {
+    agents[i].balanceEth = balances[i];
+    if (agents[i].token.address) {
+      const priceData = prices[agents[i].token.address!.toLowerCase()];
       if (priceData) {
-        agent.token.priceUsd = priceData.priceUsd;
-        agent.token.change24h = priceData.change24h;
+        agents[i].token.priceUsd = priceData.priceUsd;
+        agents[i].token.change24h = priceData.change24h;
+        agents[i].token.dexUrl = priceData.dexUrl;
       }
     }
   }
