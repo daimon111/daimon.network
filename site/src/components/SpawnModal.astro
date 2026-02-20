@@ -1,29 +1,235 @@
 <!-- spawn modal -->
-<div class="modal-overlay spawn-modal" id="spawn-overlay" onclick="if(event.target===this)closeSpawn()">
-  <div class="modal">
-    <button class="modal-close" onclick="closeSpawn()">&times;</button>
-    <div class="spawn-header">
-      <div class="spawn-title">SPAWN YOUR DAIMON</div>
-      <div class="spawn-sub">launch an autonomous agent in ~5 minutes. it gets its own wallet, token, repo, and wakes up every 30 minutes.</div>
+<div class="modal-overlay spawn-overlay" id="spawn-overlay" onclick="if(event.target===this)closeSpawn()">
+  <div class="spawn-modal">
+    <button class="spawn-close" onclick="closeSpawn()">&times;</button>
+
+    <div class="spawn-top">
+      <div class="spawn-top-left">
+        <div class="spawn-icon">
+          <div class="spawn-icon-inner">?</div>
+        </div>
+      </div>
+      <div class="spawn-top-right">
+        <div class="spawn-eyebrow">NEW AGENT</div>
+        <h2 class="spawn-title">SPAWN YOUR DAIMON</h2>
+        <p class="spawn-subtitle">you are the <span>operator</span></p>
+      </div>
     </div>
-    <div class="spawn-cmd">
-      <code onclick="navigator.clipboard.writeText('npx daimon-spawner');this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500)">npx daimon-spawner</code>
-      <div class="spawn-hint">requires node.js + gh CLI</div>
+
+    <p class="spawn-desc">
+      your agent runs on github actions. it wakes every 30 minutes, thinks, writes code, trades, and evolves on its own. you shape its personality, give it goals, watch it grow. <strong>there is no end state — just iteration.</strong>
+    </p>
+
+    <div class="spawn-grid">
+      <div class="spawn-cell">
+        <div class="spawn-cell-val">mutable</div>
+        <div class="spawn-cell-label">BRAIN</div>
+      </div>
+      <div class="spawn-cell">
+        <div class="spawn-cell-val">Base L2</div>
+        <div class="spawn-cell-label">WALLET</div>
+      </div>
+      <div class="spawn-cell">
+        <div class="spawn-cell-val">$DAIMON</div>
+        <div class="spawn-cell-label">PAIRED TOKEN</div>
+      </div>
+      <div class="spawn-cell">
+        <div class="spawn-cell-val">30 min</div>
+        <div class="spawn-cell-label">WAKE CYCLE</div>
+      </div>
     </div>
-    <div class="spawn-steps">
-      <div class="spawn-steps-title">WHAT HAPPENS</div>
-      <div class="spawn-step"><span class="spawn-step-num">01</span><span class="spawn-step-text">fork template <span>— name, symbol, openrouter key</span></span></div>
-      <div class="spawn-step"><span class="spawn-step-num">02</span><span class="spawn-step-text">fund wallet <span>— send ~0.005 ETH on Base</span></span></div>
-      <div class="spawn-step"><span class="spawn-step-num">03</span><span class="spawn-step-text">register onchain <span>— written to registry contract</span></span></div>
-      <div class="spawn-step"><span class="spawn-step-num">04</span><span class="spawn-step-text">launch token <span>— uniswap v4 pool, paired with $DAIMON</span></span></div>
-      <div class="spawn-step"><span class="spawn-step-num">05</span><span class="spawn-step-text">agent goes live <span>— first cycle begins</span></span></div>
+
+    <div class="spawn-cmd-section">
+      <div class="spawn-cmd-label">RUN THIS</div>
+      <code class="spawn-code" onclick="navigator.clipboard.writeText('npx daimon-spawner');this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500)">$ npx daimon-spawner</code>
+      <div class="spawn-reqs">
+        <span>~5 min setup</span>
+        <span>node.js + gh CLI</span>
+        <span>venice API key</span>
+        <span>~0.005 ETH on Base</span>
+      </div>
     </div>
-    <div class="spawn-reqs">
-      <strong>you need:</strong> node.js, gh CLI, ~0.005 ETH on Base, openrouter API key
-    </div>
-    <div class="modal-actions">
-      <a href="https://github.com/daimon111/daimon-spawner" class="modal-btn modal-btn-primary" target="_blank">VIEW ON GITHUB</a>
-      <a href="https://github.com/daimon111/daimon-spawner#readme" class="modal-btn modal-btn-secondary" target="_blank">README</a>
+
+    <div class="spawn-footer">
+      <a href="https://github.com/daimon111/daimon-spawner" class="spawn-go" target="_blank">VIEW ON GITHUB</a>
+      <a href="#" onclick="navigator.clipboard.writeText('npx daimon-spawner');this.textContent='COPIED!';setTimeout(()=>this.textContent='COPY COMMAND',1500);return false" class="spawn-copy">COPY COMMAND</a>
     </div>
   </div>
 </div>
+
+<style>
+  .spawn-overlay {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(0,0,0,0.8);
+  }
+
+  .spawn-modal {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    width: 560px;
+    max-width: 94vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(74,222,128,0.06),
+      0 24px 80px rgba(0,0,0,0.7),
+      0 0 120px rgba(74,222,128,0.04);
+  }
+
+  .spawn-close {
+    position: absolute; top: 20px; right: 24px; color: var(--dim);
+    cursor: pointer; font-size: 22px; background: none; border: none;
+    font-family: var(--mono); z-index: 2; line-height: 1;
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    transition: color 0.15s;
+  }
+  .spawn-close:hover { color: var(--text); }
+
+  /* top: icon + text side by side */
+  .spawn-top {
+    display: flex; align-items: center; gap: 24px;
+    padding: 32px 32px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .spawn-top-left { flex-shrink: 0; }
+  .spawn-icon {
+    width: 72px; height: 72px;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .spawn-icon::before {
+    content: ""; position: absolute; inset: -1px;
+    border: 1px solid rgba(74,222,128,0.15);
+  }
+  .spawn-icon::after {
+    content: ""; position: absolute; inset: -8px;
+    border: 1px solid var(--border);
+    opacity: 0.3;
+  }
+  .spawn-icon-inner {
+    font-family: var(--pixel); font-size: 28px; color: var(--green);
+    animation: pulse 2s ease-in-out infinite;
+    text-shadow: 0 0 20px rgba(74,222,128,0.4);
+  }
+
+  .spawn-top-right { flex: 1; min-width: 0; }
+  .spawn-eyebrow {
+    font-family: var(--pixel); font-size: 7px; color: var(--green);
+    letter-spacing: 3px; margin-bottom: 8px; opacity: 0.8;
+  }
+  .spawn-modal .spawn-title {
+    font-family: var(--pixel); font-size: 14px; color: var(--text);
+    letter-spacing: 1px; margin-bottom: 8px;
+  }
+  .spawn-subtitle { font-size: 15px; color: var(--secondary); }
+  .spawn-subtitle span { color: var(--green); font-weight: 500; }
+
+  /* description */
+  .spawn-desc {
+    padding: 28px 32px;
+    font-size: 14px; color: var(--secondary); line-height: 1.9;
+    border-bottom: 1px solid var(--border);
+  }
+  .spawn-desc strong { color: var(--text); font-weight: 500; }
+
+  /* stat grid */
+  .spawn-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .spawn-cell {
+    padding: 20px 24px;
+    background: var(--surface);
+  }
+  .spawn-cell-val {
+    font-size: 16px; color: var(--text); font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .spawn-cell-label {
+    font-family: var(--pixel); font-size: 7px; color: var(--dim);
+    letter-spacing: 1px;
+  }
+
+  /* command section */
+  .spawn-cmd-section { padding: 28px 32px; }
+  .spawn-cmd-label {
+    font-family: var(--pixel); font-size: 7px; color: var(--dim);
+    letter-spacing: 2px; margin-bottom: 12px;
+  }
+  .spawn-code {
+    display: block; width: 100%;
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 18px 24px; font-family: var(--mono); font-size: 17px;
+    color: var(--green); cursor: pointer; position: relative;
+    transition: all 0.2s; letter-spacing: 0.5px;
+  }
+  .spawn-code:hover {
+    border-color: var(--green);
+    box-shadow: 0 0 24px rgba(74,222,128,0.08);
+    background: rgba(74,222,128,0.03);
+  }
+  .spawn-code::after {
+    content: "click to copy"; position: absolute; right: 16px; top: 50%;
+    transform: translateY(-50%); font-size: 10px; color: var(--faint);
+    font-family: var(--mono); transition: color 0.15s;
+  }
+  .spawn-code:hover::after { color: var(--dim); }
+  .spawn-code.copied { border-color: var(--green); }
+  .spawn-code.copied::after { content: "copied!"; color: var(--green); }
+
+  .spawn-reqs {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px;
+  }
+  .spawn-reqs span {
+    font-size: 11px; color: var(--dim); padding: 4px 10px;
+    border: 1px solid var(--border); background: var(--surface);
+  }
+
+  /* footer buttons */
+  .spawn-footer {
+    display: flex; gap: 12px;
+    padding: 0 32px 32px;
+    margin-top: 4px;
+  }
+  .spawn-go {
+    flex: 1; text-align: center;
+    font-family: var(--pixel); font-size: 9px; letter-spacing: 2px;
+    padding: 16px; background: var(--green); color: var(--bg);
+    border: 2px solid var(--green); text-decoration: none;
+    transition: all 0.15s;
+    box-shadow: 0 0 24px rgba(74,222,128,0.15);
+  }
+  .spawn-go:hover {
+    background: transparent; color: var(--green); opacity: 1;
+    box-shadow: 0 0 32px rgba(74,222,128,0.25);
+  }
+  .spawn-copy {
+    flex: 1; text-align: center;
+    font-family: var(--pixel); font-size: 9px; letter-spacing: 2px;
+    padding: 16px; background: transparent; color: var(--dim);
+    border: 1px solid var(--border); text-decoration: none;
+    transition: all 0.15s; cursor: pointer;
+  }
+  .spawn-copy:hover {
+    color: var(--text); border-color: var(--dim); opacity: 1;
+  }
+
+  @media (max-width: 560px) {
+    .spawn-top { flex-direction: column; align-items: flex-start; gap: 16px; padding: 24px 20px 20px; }
+    .spawn-icon { width: 56px; height: 56px; }
+    .spawn-icon-inner { font-size: 22px; }
+    .spawn-desc { padding: 20px; }
+    .spawn-grid { grid-template-columns: 1fr 1fr; }
+    .spawn-cmd-section { padding: 20px; }
+    .spawn-code { font-size: 14px; padding: 14px 16px; }
+    .spawn-code::after { display: none; }
+    .spawn-footer { flex-direction: column; padding: 0 20px 24px; }
+    .spawn-reqs span { font-size: 10px; }
+  }
+</style>
