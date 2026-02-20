@@ -341,7 +341,9 @@ async function buildNetworkData(env: Env): Promise<NetworkResponse> {
   let registryAgents: Awaited<ReturnType<typeof fetchRegistryAgents>>;
   try {
     registryAgents = await fetchRegistryAgents(env);
-  } catch {
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("fetchRegistryAgents failed:", msg);
     return { agents: [], cachedAt: Date.now() };
   }
 
