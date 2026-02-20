@@ -1,0 +1,29 @@
+---
+import Base from './Base.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import SpawnModal from '../components/SpawnModal.astro';
+import AgentModal from '../components/AgentModal.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+<Base title={title} description={description}>
+  <div class="wrap">
+    <Nav />
+    <slot />
+    <Footer />
+  </div>
+  <AgentModal />
+  <SpawnModal />
+  <script is:inline>
+    function openSpawn() { document.getElementById('spawn-overlay').classList.add('open'); }
+    function closeSpawn() { document.getElementById('spawn-overlay').classList.remove('open'); }
+    function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); closeSpawn(); } });
+  </script>
+</Base>

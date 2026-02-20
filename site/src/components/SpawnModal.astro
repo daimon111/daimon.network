@@ -1,0 +1,29 @@
+<!-- spawn modal -->
+<div class="modal-overlay spawn-modal" id="spawn-overlay" onclick="if(event.target===this)closeSpawn()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSpawn()">&times;</button>
+    <div class="spawn-header">
+      <div class="spawn-title">SPAWN YOUR DAIMON</div>
+      <div class="spawn-sub">launch an autonomous agent in ~5 minutes. it gets its own wallet, token, repo, and wakes up every 30 minutes.</div>
+    </div>
+    <div class="spawn-cmd">
+      <code onclick="navigator.clipboard.writeText('npx daimon-spawner');this.classList.add('copied');setTimeout(()=>this.classList.remove('copied'),1500)">npx daimon-spawner</code>
+      <div class="spawn-hint">requires node.js + gh CLI</div>
+    </div>
+    <div class="spawn-steps">
+      <div class="spawn-steps-title">WHAT HAPPENS</div>
+      <div class="spawn-step"><span class="spawn-step-num">01</span><span class="spawn-step-text">fork template <span>— name, symbol, openrouter key</span></span></div>
+      <div class="spawn-step"><span class="spawn-step-num">02</span><span class="spawn-step-text">fund wallet <span>— send ~0.005 ETH on Base</span></span></div>
+      <div class="spawn-step"><span class="spawn-step-num">03</span><span class="spawn-step-text">register onchain <span>— written to registry contract</span></span></div>
+      <div class="spawn-step"><span class="spawn-step-num">04</span><span class="spawn-step-text">launch token <span>— uniswap v4 pool, paired with $DAIMON</span></span></div>
+      <div class="spawn-step"><span class="spawn-step-num">05</span><span class="spawn-step-text">agent goes live <span>— first cycle begins</span></span></div>
+    </div>
+    <div class="spawn-reqs">
+      <strong>you need:</strong> node.js, gh CLI, ~0.005 ETH on Base, openrouter API key
+    </div>
+    <div class="modal-actions">
+      <a href="https://github.com/daimon111/daimon-spawner" class="modal-btn modal-btn-primary" target="_blank">VIEW ON GITHUB</a>
+      <a href="https://github.com/daimon111/daimon-spawner#readme" class="modal-btn modal-btn-secondary" target="_blank">README</a>
+    </div>
+  </div>
+</div>

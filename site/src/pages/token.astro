@@ -1,0 +1,338 @@
+---
+import Page from '../layouts/Page.astro';
+---
+<Page title="daimon — token & treasury" navTitle="TOKEN" description="$DAIMON token data, treasury info, and holder registration on Base">
+
+  <!-- price hero -->
+  <div style="padding:48px 0 40px;">
+    <div style="font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;">$DAIMON</div>
+    <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;">
+      <div id="price" style="font-size:40px;font-weight:300;color:var(--text);">---</div>
+      <div id="price-change" style="font-size:16px;font-weight:400;">---</div>
+    </div>
+    <div style="display:flex;gap:24px;margin-top:12px;font-size:12px;color:var(--secondary);">
+      <span>mcap <span id="mcap" style="color:var(--text);">---</span></span>
+      <span>fdv <span id="fdv" style="color:var(--text);">---</span></span>
+    </div>
+  </div>
+
+  <!-- token stats grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-value" id="stat-supply">100B</div>
+      <div class="stat-label">total supply</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-holders">&mdash;</div>
+      <div class="stat-label">holders</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-volume">&mdash;</div>
+      <div class="stat-label">24h volume</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" id="stat-liquidity">&mdash;</div>
+      <div class="stat-label">liquidity</div>
+    </div>
+  </div>
+
+  <!-- treasury -->
+  <div style="margin-bottom:40px;">
+    <h2 class="section-title-h2">treasury</h2>
+    <p style="color:var(--secondary);font-size:12px;margin-bottom:16px;">
+      wallet balances for
+      <a href="https://basescan.org/address/0x5D90a925329547257117f7E3Ef84D60CFE1543Eb" target="_blank">0x5D90...43Eb</a>
+      on Base
+    </p>
+    <div id="treasury-rows">
+      <div class="treasury-row">
+        <span class="treasury-token">ETH</span>
+        <span><span class="treasury-balance" id="treasury-eth">loading...</span></span>
+      </div>
+      <div class="treasury-row">
+        <span class="treasury-token">USDC</span>
+        <span><span class="treasury-balance" id="treasury-usdc">loading...</span></span>
+      </div>
+      <div class="treasury-row">
+        <span class="treasury-token">DAIMON</span>
+        <span><span class="treasury-balance" id="treasury-daimon">loading...</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- buy links -->
+  <div style="display:flex;gap:12px;margin-bottom:48px;flex-wrap:wrap;">
+    <a id="buy-link" href="#" target="_blank" class="btn btn-primary">buy on dexscreener</a>
+    <a href="https://basescan.org/token/0x98c51C8E958ccCD37F798b2B9332d148E2c05D57" target="_blank" class="btn">view on basescan</a>
+  </div>
+
+  <!-- registered holders -->
+  <div style="border-top:1px solid var(--border);padding-top:40px;margin-bottom:40px;">
+    <h2 class="section-title-h2">registered holders</h2>
+    <p style="color:var(--secondary);font-size:12px;margin-bottom:8px;line-height:1.8;">
+      link your wallet to your GitHub identity onchain. registered holders can submit proposals and influence direction. requires at least 1,000 DAIMON.
+      <a href="https://basescan.org/address/0xcc5976790d41B10c254Be22d95F5ae20F73d0d8b" target="_blank">view contract</a>
+    </p>
+
+    <div id="connect-card" class="card" style="margin-top:16px;">
+      <h2>connect wallet</h2>
+      <p style="color:var(--secondary);font-size:12px;margin-bottom:16px;">
+        connect your wallet to check your DAIMON balance and register.
+      </p>
+      <button id="connect-btn" class="btn btn-primary" onclick="connectWallet()">connect with metamask</button>
+    </div>
+
+    <div id="wallet-card" class="card hidden" style="margin-top:16px;">
+      <h2>your holdings</h2>
+      <div class="balance-display" id="user-balance">&mdash; <span>DAIMON</span></div>
+      <div class="address" id="user-address">&mdash;</div>
+
+      <div id="registration-section">
+        <div class="label">your github username</div>
+        <input type="text" id="github-input" placeholder="username" maxlength="39" />
+        <div id="registration-status"></div>
+        <div style="display:flex;gap:12px;">
+          <button id="register-btn" class="btn btn-primary" onclick="register()">register onchain</button>
+          <button id="unregister-btn" class="btn btn-danger hidden" onclick="unregister()">unregister</button>
+        </div>
+      </div>
+
+      <div id="message" class="message hidden"></div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <h3 style="font-size:13px;font-weight:500;margin-bottom:12px;color:var(--secondary);">all registrations</h3>
+      <div id="holders-list-content">
+        <p style="color:var(--secondary);font-size:12px;">loading...</p>
+      </div>
+    </div>
+  </div>
+
+</Page>
+
+<style>
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 40px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+  .stat-value { font-size: 20px; font-weight: 400; color: var(--green); margin-bottom: 4px; }
+  .treasury-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; }
+  .treasury-token { font-weight: 500; }
+  .treasury-balance { color: var(--green); font-weight: 400; }
+  .treasury-usd { font-size: 11px; color: var(--dim); margin-left: 8px; }
+  .balance-display { font-size: 32px; font-weight: 300; margin: 16px 0; }
+  .balance-display span { font-size: 14px; color: var(--secondary); }
+  .address { font-size: 12px; color: var(--secondary); word-break: break-all; margin-bottom: 16px; }
+  .section-title-h2 { font-size: 14px; font-weight: 500; margin-bottom: 16px; color: var(--text); font-family: var(--mono); }
+  .card h2 { font-size: 14px; font-weight: 500; margin-bottom: 16px; color: var(--text); font-family: var(--mono); }
+  .registered-badge { display: inline-block; background: rgba(74,222,128,0.2); color: var(--green); padding: 4px 8px; border-radius: 4px; font-size: 11px; margin-left: 8px; }
+  .holder-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; }
+  .holder-item .github { font-weight: 500; color: var(--green); }
+  .holder-item .wallet { font-size: 11px; color: var(--secondary); font-family: monospace; }
+  .holder-item .time { font-size: 11px; color: var(--dim); }
+  .label { font-size: 12px; color: var(--secondary); margin-bottom: 8px; }
+  .btn-danger { background: var(--red); border-color: var(--red); color: var(--bg); }
+  .btn-danger:hover { background: #ef4444; border-color: #ef4444; color: var(--bg); }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .treasury-row { flex-wrap: wrap; gap: 4px; }
+  }
+</style>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/ethers@6.13.1/dist/ethers.umd.min.js"></script>
+<script is:inline>
+  var DAIMON_TOKEN = '0x98c51C8E958ccCD37F798b2B9332d148E2c05D57';
+  var REGISTRY = '0xcc5976790d41B10c254Be22d95F5ae20F73d0d8b';
+  var TREASURY = '0x5D90a925329547257117f7E3Ef84D60CFE1543Eb';
+  var USDC_ADDRESS = '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913';
+  var BASE_RPC = 'https://mainnet.base.org';
+  var DEXSCREENER_API = 'https://api.dexscreener.com/latest/dex/tokens/' + DAIMON_TOKEN;
+  var DEPLOY_BLOCK = 42300000;
+
+  var ERC20_ABI = ['function balanceOf(address) view returns (uint256)'];
+  var REGISTRY_ABI = [
+    'function register(string _githubUsername) external',
+    'function unregister() external',
+    'function githubToAddress(string) view returns (address)',
+    'function addressToGithub(address) view returns (string)',
+    'function isRegistered(address) view returns (bool)',
+    'function MIN_BALANCE() view returns (uint256)',
+    'event Registered(address indexed ethAddress, string githubUsername)',
+  ];
+
+  var walletProvider, walletSigner, userAddress;
+
+  function esc(s) { var d = document.createElement("div"); d.textContent = s || ""; return d.innerHTML; }
+  function fmt(n, decimals) {
+    if (n == null || isNaN(n)) return '---';
+    if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+    if (n >= 1e3) return '$' + (n / 1e3).toFixed(1) + 'K';
+    return '$' + Number(n).toFixed(decimals != null ? decimals : 2);
+  }
+  function showMessage(text, type) {
+    var msg = document.getElementById('message');
+    msg.textContent = text;
+    msg.className = 'message ' + type;
+    msg.classList.remove('hidden');
+  }
+
+  async function loadPriceData() {
+    try {
+      var res = await fetch(DEXSCREENER_API);
+      var data = await res.json();
+      var pair = data.pairs && data.pairs[0];
+      if (!pair) return;
+      var price = parseFloat(pair.priceUsd);
+      document.getElementById('price').textContent = price < 0.01 ? '$' + price.toFixed(6) : '$' + price.toFixed(4);
+      var change = pair.priceChange && pair.priceChange.h24;
+      var changeEl = document.getElementById('price-change');
+      if (change != null) {
+        var positive = parseFloat(change) >= 0;
+        changeEl.textContent = (positive ? '+' : '') + parseFloat(change).toFixed(2) + '%';
+        changeEl.style.color = positive ? 'var(--green)' : 'var(--red)';
+      }
+      if (pair.marketCap) document.getElementById('mcap').textContent = fmt(pair.marketCap);
+      if (pair.fdv) document.getElementById('fdv').textContent = fmt(pair.fdv);
+      if (pair.volume && pair.volume.h24) document.getElementById('stat-volume').textContent = fmt(pair.volume.h24);
+      if (pair.liquidity && pair.liquidity.usd) document.getElementById('stat-liquidity').textContent = fmt(pair.liquidity.usd);
+      if (pair.url) document.getElementById('buy-link').href = pair.url;
+    } catch (e) { console.error('dexscreener error:', e); }
+  }
+
+  async function loadTreasury() {
+    try {
+      var provider = new ethers.JsonRpcProvider(BASE_RPC);
+      var res = await fetch(DEXSCREENER_API);
+      var data = await res.json();
+      var pair = data.pairs && data.pairs[0];
+      var daimonPrice = pair ? parseFloat(pair.priceUsd) : 0;
+
+      var ethBal = await provider.getBalance(TREASURY);
+      document.getElementById('treasury-eth').textContent = parseFloat(ethers.formatEther(ethBal)).toFixed(4) + ' ETH';
+
+      var usdc = new ethers.Contract(USDC_ADDRESS, ERC20_ABI, provider);
+      var usdcBal = await usdc.balanceOf(TREASURY);
+      document.getElementById('treasury-usdc').textContent = parseFloat(ethers.formatUnits(usdcBal, 6)).toLocaleString(undefined, {maximumFractionDigits: 2}) + ' USDC';
+
+      var daimon = new ethers.Contract(DAIMON_TOKEN, ERC20_ABI, provider);
+      var daimonBal = await daimon.balanceOf(TREASURY);
+      var daimonFormatted = parseFloat(ethers.formatUnits(daimonBal, 18));
+      var daimonEl = document.getElementById('treasury-daimon');
+      daimonEl.textContent = daimonFormatted.toLocaleString(undefined, {maximumFractionDigits: 0}) + ' DAIMON';
+      if (daimonPrice > 0) {
+        daimonEl.insertAdjacentHTML('afterend', '<span class="treasury-usd">~' + fmt(daimonFormatted * daimonPrice) + '</span>');
+      }
+    } catch (e) {
+      console.error('treasury error:', e);
+      document.getElementById('treasury-eth').textContent = '---';
+      document.getElementById('treasury-usdc').textContent = '---';
+      document.getElementById('treasury-daimon').textContent = '---';
+    }
+  }
+
+  async function connectWallet() {
+    if (!window.ethereum) { showMessage('please install metamask or rabby', 'error'); return; }
+    try {
+      walletProvider = new ethers.BrowserProvider(window.ethereum);
+      var accounts = await walletProvider.send('eth_requestAccounts', []);
+      walletSigner = await walletProvider.getSigner();
+      userAddress = accounts[0];
+      var network = await walletProvider.getNetwork();
+      if (network.chainId !== 8453n) {
+        try { await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x2105' }] }); }
+        catch (e) { showMessage('please switch to Base network', 'error'); return; }
+      }
+      document.getElementById('connect-card').classList.add('hidden');
+      document.getElementById('wallet-card').classList.remove('hidden');
+      document.getElementById('user-address').textContent = userAddress;
+      var daimon = new ethers.Contract(DAIMON_TOKEN, ERC20_ABI, walletProvider);
+      var balance = await daimon.balanceOf(userAddress);
+      var formatted = ethers.formatUnits(balance, 18);
+      document.getElementById('user-balance').innerHTML = Number(formatted).toLocaleString(undefined, {maximumFractionDigits: 2}) + ' <span>DAIMON</span>';
+      var registry = new ethers.Contract(REGISTRY, REGISTRY_ABI, walletProvider);
+      var isReg = await registry.isRegistered(userAddress);
+      if (isReg) {
+        var github = await registry.addressToGithub(userAddress);
+        document.getElementById('github-input').value = github;
+        document.getElementById('github-input').disabled = true;
+        document.getElementById('register-btn').classList.add('hidden');
+        document.getElementById('unregister-btn').classList.remove('hidden');
+        document.getElementById('registration-status').innerHTML = '<span class="registered-badge">registered as ' + esc(github) + '</span>';
+      }
+    } catch (e) {
+      console.error('connect error:', e);
+      showMessage('connection failed: ' + e.message.slice(0, 100), 'error');
+    }
+  }
+
+  async function register() {
+    var github = document.getElementById('github-input').value.trim();
+    if (!github) { showMessage('enter your github username', 'error'); return; }
+    if (!/^[a-zA-Z0-9_-]{1,39}$/.test(github)) { showMessage('invalid github username', 'error'); return; }
+    try {
+      showMessage('confirm the transaction in your wallet...', 'info');
+      var registry = new ethers.Contract(REGISTRY, REGISTRY_ABI, walletSigner);
+      var tx = await registry.register(github);
+      showMessage('transaction submitted, waiting for confirmation...', 'info');
+      await tx.wait();
+      showMessage('registered as ' + esc(github) + '!', 'success');
+      document.getElementById('github-input').disabled = true;
+      document.getElementById('register-btn').classList.add('hidden');
+      document.getElementById('unregister-btn').classList.remove('hidden');
+      document.getElementById('registration-status').innerHTML = '<span class="registered-badge">registered as ' + esc(github) + '</span>';
+      loadHolders();
+    } catch (e) {
+      console.error(e);
+      if (e.message.includes('user rejected')) showMessage('transaction cancelled', 'error');
+      else if (e.message.includes('must hold DAIMON')) showMessage('you need at least 1,000 DAIMON to register', 'error');
+      else showMessage('registration failed: ' + e.message.slice(0, 100), 'error');
+    }
+  }
+
+  async function unregister() {
+    try {
+      showMessage('confirm the transaction in your wallet...', 'info');
+      var registry = new ethers.Contract(REGISTRY, REGISTRY_ABI, walletSigner);
+      var tx = await registry.unregister();
+      showMessage('transaction submitted, waiting for confirmation...', 'info');
+      await tx.wait();
+      showMessage('unregistered successfully', 'success');
+      document.getElementById('github-input').value = '';
+      document.getElementById('github-input').disabled = false;
+      document.getElementById('register-btn').classList.remove('hidden');
+      document.getElementById('unregister-btn').classList.add('hidden');
+      document.getElementById('registration-status').innerHTML = '';
+      loadHolders();
+    } catch (e) {
+      console.error(e);
+      showMessage('unregister failed: ' + e.message.slice(0, 100), 'error');
+    }
+  }
+
+  async function loadHolders() {
+    try {
+      var provider = new ethers.JsonRpcProvider(BASE_RPC);
+      var registry = new ethers.Contract(REGISTRY, REGISTRY_ABI, provider);
+      var filter = registry.filters.Registered();
+      var events = await registry.queryFilter(filter, DEPLOY_BLOCK, 'latest');
+      if (events.length === 0) {
+        document.getElementById('holders-list-content').innerHTML = '<p style="color:var(--secondary);font-size:12px;">no registrations yet. be the first!</p>';
+        return;
+      }
+      var html = '';
+      for (var i = events.length - 1; i >= 0; i--) {
+        var ev = events[i];
+        var addr = ev.args[0];
+        var github = ev.args[1];
+        html += '<div class="holder-item"><div><span class="github">@' + esc(github) + '</span> <span class="wallet">' + esc(addr.slice(0,6)) + '...' + esc(addr.slice(-4)) + '</span></div><span class="time">block ' + ev.blockNumber + '</span></div>';
+      }
+      document.getElementById('holders-list-content').innerHTML = html;
+    } catch (e) {
+      console.error('load holders error:', e);
+      document.getElementById('holders-list-content').innerHTML = '<p style="color:var(--secondary);font-size:12px;">check <a href="https://basescan.org/address/0xcc5976790d41B10c254Be22d95F5ae20F73d0d8b#events" target="_blank">basescan events</a></p>';
+    }
+  }
+
+  loadPriceData();
+  loadTreasury();
+  loadHolders();
+</script>

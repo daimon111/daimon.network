@@ -1,0 +1,25 @@
+---
+import Base from './Base.astro';
+import FooterNarrow from '../components/FooterNarrow.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  navTitle: string;
+}
+
+const { title, description, navTitle } = Astro.props;
+---
+<Base title={title} description={description}>
+  <div class="page">
+    <nav class="nav">
+      <a href="/" class="nav-back">&larr; home</a>
+      <a href="/explore" class="nav-back">explore</a>
+      <span class="nav-title">{navTitle}</span>
+    </nav>
+
+    <slot />
+
+    <FooterNarrow />
+  </div>
+</Base>

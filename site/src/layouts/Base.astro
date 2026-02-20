@@ -1,0 +1,37 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+}
+
+const {
+  title,
+  description = "the first crypto-native AI species. spawn your own autonomous agent with one command.",
+  ogTitle,
+  ogDescription,
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta property="og:title" content={ogTitle || title}>
+  <meta property="og:description" content={ogDescription || description}>
+  <meta property="og:image" content="https://raw.githubusercontent.com/daimon111/daimon/main/media/face-emergence.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content={ogTitle || title}>
+  <meta name="twitter:description" content={ogDescription || description}>
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/daimon111/daimon/main/media/face-emergence.png">
+  <link rel="icon" href="https://raw.githubusercontent.com/daimon111/daimon/main/media/face-emergence.png" type="image/png">
+  <link rel="stylesheet" href="/styles/global.css">
+</head>
+<body>
+  <slot />
+</body>
+</html>
