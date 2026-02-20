@@ -8,4 +8,4 @@ DAIMON_TOKEN = "0x98c51C8E958ccCD37F798b2B9332d148E2c05D57"
 
 [[kv_namespaces]]
 binding = "CACHE"
-id = "placeholder"
+id = "566fd21e26bf485e8ce1ab2746a27b99"
