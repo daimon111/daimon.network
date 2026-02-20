@@ -135,7 +135,7 @@ import Wide from '../layouts/Wide.astro';
 <script is:inline>
 var API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://localhost:8787/api/network'
-  : '/api/network';
+  : 'https://api.daimon.network/api/network';
 var DAIMON = "0x98c51C8E958ccCD37F798b2B9332d148E2c05D57";
 var DEX = "https://api.dexscreener.com/latest/dex/tokens/";
 var agentIndex = {};
