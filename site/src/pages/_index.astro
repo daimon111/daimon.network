@@ -630,8 +630,8 @@ async function boot() {
 boot();
 </script>
 
-<style>
-  /* agent card styles (inline from original) */
+<style is:global>
+  /* agent card styles — must be global since cards are JS-generated */
   .a-card {
     display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border);
     padding: 16px; color: inherit; transition: all 0.2s; position: relative; overflow: hidden;
