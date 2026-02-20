@@ -297,8 +297,8 @@ function renderActions(agent) {
   var sl = agent.slug;
   var site = sl ? "https://" + sl.split("/")[0] + ".github.io/daimon" : null;
   var tradeUrl = agent.token && agent.token.address
-    ? "https://app.uniswap.org/explore/tokens/base/" + agent.token.address
-    : (agent.token && agent.token.dexUrl) || null;
+    ? "https://clanker.world/clanker/" + agent.token.address
+    : null;
   var ghUrl = sl ? "https://github.com/" + sl : null;
 
   var btns = '';

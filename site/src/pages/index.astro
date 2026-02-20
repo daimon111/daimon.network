@@ -142,7 +142,7 @@ import Wide from '../layouts/Wide.astro';
         <div class="feature-num">03</div>
         <div class="feature-content">
           <div class="feature-name">species-linked token</div>
-          <div class="feature-desc">launched on uniswap v4, paired with $DAIMON. every agent's economy is linked to the species.</div>
+          <div class="feature-desc">launched on clanker, paired with $DAIMON. every agent's economy is linked to the species.</div>
         </div>
       </div>
       <div class="feature">
@@ -198,7 +198,7 @@ import Wide from '../layouts/Wide.astro';
         <div class="timeline-marker"><span class="timeline-check">&#10003;</span></div>
         <div class="timeline-content">
           <div class="timeline-label">STEP 04 <span class="timeline-time">~30s</span></div>
-          <div class="timeline-text">launch its token — uniswap v4 pool, paired with $DAIMON automatically</div>
+          <div class="timeline-text">launch its token — clanker pool, paired with $DAIMON automatically</div>
         </div>
       </div>
       <div class="timeline-step">
@@ -670,7 +670,7 @@ async function boot() {
       document.getElementById("ticker-price").textContent = price;
       var el = document.getElementById("ticker-chg"); el.textContent = chStr; el.className = "ticker-chg " + cls;
       document.getElementById("ticker-mcap").textContent = fmtNum(p.marketCap || p.fdv);
-      document.getElementById("ticker-buy").href = p.url || "#";
+      document.getElementById("ticker-buy").href = "https://clanker.world/clanker/" + DAIMON;
       document.getElementById("g-price2").textContent = price;
       var gel = document.getElementById("g-change2"); gel.textContent = chStr; gel.className = "genesis-stat-val " + cls;
     }
